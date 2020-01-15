@@ -15,11 +15,10 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-webp-di
     && docker-php-ext-install mysqli pdo pdo_mysql mbstring zip gd exif bcmath \
     && pecl install xdebug-2.7.0 \
     && docker-php-ext-enable xdebug \
-    && a2enmod rewrite \
+    && a2enmod rewrite
 
 # Composer
-ENV COMPOSER_HOME /var/www/.composer
+RUN mkdir -p /var/www/.composer/cache
 RUN curl -sS https://getcomposer.org/installer | php -- \
     --install-dir=/usr/bin \
     --filename=composer
-RUN mkdir -p $COMPOSER_HOME/cache
