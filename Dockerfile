@@ -7,9 +7,19 @@ RUN apt-get update -y && \
         libxpm-dev \
         libfreetype6-dev \
         zlib1g-dev \
-        libzip-dev
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-webp-dir=/usr/include/  --with-jpeg-dir=/usr/include/
-RUN docker-php-ext-install mysqli pdo pdo_mysql mbstring zip gd exif bcmath
-RUN pecl install xdebug-2.7.0
-RUN docker-php-ext-enable xdebug
-RUN a2enmod rewrite
+        libzip-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-webp-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure bcmath --enable-bcmath \
+    && docker-php-ext-install mysqli pdo pdo_mysql mbstring zip gd exif bcmath \
+    && pecl install xdebug-2.7.0 \
+    && docker-php-ext-enable xdebug \
+    && a2enmod rewrite \
+
+# Composer
+ENV COMPOSER_HOME /var/www/.composer
+RUN curl -sS https://getcomposer.org/installer | php -- \
+    --install-dir=/usr/bin \
+    --filename=composer
+RUN mkdir -p $COMPOSER_HOME/cache
